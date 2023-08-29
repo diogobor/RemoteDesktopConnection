@@ -1,0 +1,217 @@
+﻿<Window x:Class="RemoteDesktopConnection.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RemoteDesktopConnection"
+        mc:Ignorable="d"
+        Title="Remote Desktop Connection" Height="505" Width="520" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/start.png">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <GroupBox
+            Header=""
+            Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="User:"
+                           Margin="0,0,0,0"
+                           Grid.Column="0"
+                           Grid.Row="0"/>
+                <TextBlock Text="---"
+                           Grid.Column="1"
+                           Grid.Row="0"
+                           x:Name="TBUser"
+                           Margin="10,0,0,0"
+                           FontWeight="Bold"/>
+                <Button x:Name="ButtonConnect"
+                        Grid.Column="2"
+                        Grid.Row="0"
+                Click="ButtonConnect_Click"
+                Padding="10,1,10,1" 
+                Height="20"
+                HorizontalAlignment="Left" 
+                Cursor="Hand"
+                Margin="10,0,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <DockPanel>
+                            <Image x:Name="run_btn_img" Source="/start.png" />
+                        </DockPanel>
+                        <TextBlock x:Name="run_btn_text" Margin="10,0,0,0" Width="50">Connect</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Text="Last updated:"
+                           Grid.Row="1"
+                           Margin="0,5,0,0"/>
+                <TextBlock Text="---"
+                           x:Name="LastUpdate"
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           Grid.ColumnSpan="3"
+                           Margin="10,5,0,0"/>
+            </Grid>
+
+
+        </GroupBox>
+        <TabControl Grid.Row="1"
+                    Grid.ColumnSpan="3"
+                    x:Name="AGMS_tab">
+            <TabItem Header="AGMS2">
+                <TabControl>
+                    <TabItem Header="Users">
+                        <DataGrid
+                            x:Name="DataGridAGMS2"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            AlternatingRowBackground="WhiteSmoke"
+                            LoadingRow="DataGridAGMS2_LoadingRow"
+                            VerticalScrollBarVisibility="Auto"
+                            MinHeight="310"
+                            MaxHeight="310">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                            Header="User"
+                            Binding="{Binding Name}"
+                            MaxWidth="155"
+                            MinWidth="150"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Date"
+                            Binding="{Binding Date}"
+                            MinWidth="130"
+                            MaxWidth="130"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Logged"
+                            Binding="{Binding IsLogged}"
+                            MinWidth="65"
+                            MaxWidth="65"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Task has finished"
+                            Binding="{Binding HasTaskFinished}"
+                            MinWidth="100"
+                            MaxWidth="100"
+                            CanUserSort="False"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Software">
+                        <DataGrid
+                            x:Name="DataGridAGMS2_Software"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            AlternatingRowBackground="WhiteSmoke"
+                            LoadingRow="DataGridAGMS2_LoadingRow"
+                            VerticalScrollBarVisibility="Auto"
+                            MinHeight="310"
+                            MaxHeight="310">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Header="Software"
+                                    Binding="{Binding Name}"
+                                    MaxWidth="300"
+                                    MinWidth="200"
+                                    CanUserSort="False"/>
+                                <DataGridTextColumn
+                                    Header="Version"
+                                    Binding="{Binding Version}"
+                                    MaxWidth="300"
+                                    MinWidth="200"
+                                    CanUserSort="False"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+            <TabItem Header="AGMS3">
+                <TabControl>
+                    <TabItem Header="Users">
+                        <DataGrid
+                            x:Name="DataGridAGMS3"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            AlternatingRowBackground="WhiteSmoke"
+                            LoadingRow="DataGridAGMS3_LoadingRow"
+                            VerticalScrollBarVisibility="Auto"
+                            MinHeight="310"
+                            MaxHeight="310">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                            Header="User"
+                            Binding="{Binding Name}"
+                            MaxWidth="155"
+                            MinWidth="150"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Date"
+                            Binding="{Binding Date}"
+                            MinWidth="130"
+                            MaxWidth="130"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Logged"
+                            Binding="{Binding IsLogged}"
+                            MinWidth="65"
+                            MaxWidth="65"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Task has finished"
+                            Binding="{Binding HasTaskFinished}"
+                            MinWidth="100"
+                            MaxWidth="100"
+                            CanUserSort="False"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Software">
+                        <DataGrid
+                            x:Name="DataGridAGMS3_Software"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            AlternatingRowBackground="WhiteSmoke"
+                            LoadingRow="DataGridAGMS3_LoadingRow"
+                            VerticalScrollBarVisibility="Auto"
+                            MinHeight="310"
+                            MaxHeight="310">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Header="Software"
+                                    Binding="{Binding Name}"
+                                    MaxWidth="300"
+                                    MinWidth="200"
+                                    CanUserSort="False"/>
+                                <DataGridTextColumn
+                                    Header="Version"
+                                    Binding="{Binding Version}"
+                                    MaxWidth="300"
+                                    MinWidth="200"
+                                    CanUserSort="False"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+        </TabControl>
+        <DockPanel Grid.Row="2">
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem>
+                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2023 - v. 1.5 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
+                </StatusBarItem>
+            </StatusBar>
+        </DockPanel>
+    </Grid>
+</Window>

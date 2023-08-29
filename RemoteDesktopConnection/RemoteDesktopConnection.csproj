@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ApplicationIcon>start_icon.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="start.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="start_icon.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Google.Apis.Gmail.v1" Version="1.61.0.3098" />
+		<PackageReference Include="Google.Apis.Sheets.v4" Version="1.61.0.3092" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="start.png" />
+	</ItemGroup>
+
+</Project>
