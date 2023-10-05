@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RemoteDesktopConnection"
         mc:Ignorable="d"
         Title="Remote Desktop Connection" Height="505" Width="520" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/start.png">
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -209,7 +209,7 @@
         <DockPanel Grid.Row="2">
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
-                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2023 - v. 1.5 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
+                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2023 - v. 1.6 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>

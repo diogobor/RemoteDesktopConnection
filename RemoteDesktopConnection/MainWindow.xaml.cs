@@ -109,14 +109,28 @@ namespace RemoteDesktopConnection
         private const int TIMEOUT_HOURS_USER_CONNECTION = 3;
         private const int TIMEOUT_DAYS_USER_TASKS = 10;
 
-
-        public MainWindow()
+        [STAThread]
+        private void ConnectDatabase()
         {
-            InitializeComponent();
-            TBUser.Text = GetUser();
             Init();
-
             ReadSheets();
+        }
+
+        private async void StartApp()
+        {
+            var wait_screen = Util.Util.CallWaitWindow("Welcome to Remote Desktop Connection", "Please wait, we are loading data...");
+            MainGrid.Children.Add(wait_screen);
+            Grid.SetRowSpan(wait_screen, 4);
+            Grid.SetRow(wait_screen, 0);
+            var rows = MainGrid.RowDefinitions;
+            rows[2].Height = new GridLength(2, GridUnitType.Star);
+            await Task.Run(() => ConnectDatabase());
+
+            MainGrid.Children.Remove(wait_screen);
+            rows[2].Height = GridLength.Auto;
+
+            TBUser.Text = GetUser();
+
             if (data_agms2_users.Count > 0 && data_agms3_users.Count > 0)
             {
                 last_refresh = DateTime.Now;
@@ -136,7 +150,12 @@ namespace RemoteDesktopConnection
 
             dispatcherTimer_checkProcessAlive.Tick += new EventHandler(dispatcherTimer_checkProcessAlive_Tick);
             dispatcherTimer_checkProcessAlive.Interval = new TimeSpan(0, 0, 1);
+        }
 
+        public MainWindow()
+        {
+            InitializeComponent();
+            StartApp();
         }
 
         private void Window_Closed(object sender, EventArgs e)
