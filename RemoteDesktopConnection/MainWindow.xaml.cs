@@ -53,8 +53,9 @@ namespace RemoteDesktopConnection
             public DateTime TaskDateriginal { get; set; }
             public bool IsLogged { get; set; }
             public bool HasTaskFinished { get; set; }
+            public string Email { get; set; }
 
-            public DataGridItemUser(string server, string name, string date, DateTime dateOriginal, string taskDate, DateTime taskDateOriginal, bool isLogged, bool hasTaskFinished)
+            public DataGridItemUser(string server, string name, string date, DateTime dateOriginal, string taskDate, DateTime taskDateOriginal, bool isLogged, bool hasTaskFinished, string email)
             {
                 Server = server;
                 Name = name;
@@ -64,6 +65,7 @@ namespace RemoteDesktopConnection
                 TaskDateriginal = taskDateOriginal;
                 IsLogged = isLogged;
                 HasTaskFinished = hasTaskFinished;
+                Email = email;
             }
 
         }
@@ -95,6 +97,7 @@ namespace RemoteDesktopConnection
         private List<DataGridItemSoftware> data_agms3_software;
 
         private string error_taken_time_connected = "";
+        private string current_user = "";
 
         private DateTime last_refresh;
 
@@ -128,8 +131,9 @@ namespace RemoteDesktopConnection
 
             MainGrid.Children.Remove(wait_screen);
             rows[2].Height = GridLength.Auto;
-
-            TBUser.Text = GetUser();
+            
+            current_user = GetUser();
+            TBUser.Text = current_user;
 
             if (data_agms2_users.Count > 0 && data_agms3_users.Count > 0)
             {
@@ -251,7 +255,12 @@ namespace RemoteDesktopConnection
                     //Send an email to the user
                     TBUser.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
                     {
-                        SendEmail(TBUser.Text, ("AGMS" + selected_server), false);
+                        string email = string.Empty;
+                        if (selected_server == 2)
+                            email = data_agms2_users.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
+                        else
+                            email = data_agms3_users.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
+                        SendEmail(TBUser.Text, email, ("AGMS" + selected_server), false);
                         dispatcherTimer.Start();
                     }));
                     dispatcherTimer_checkProcessAlive.Stop();
@@ -281,21 +290,21 @@ namespace RemoteDesktopConnection
             return Convert.ToBase64String(data).Replace("+", "-").Replace("/", "_").Replace("=", "");
         }
 
-        private void SendEmails(List<(string user, string server)> users_to_send_email, bool isTaskTakesTime)
+        private void SendEmails(List<(string user, string email, string server)> users_to_send_email, bool isTaskTakesTime)
         {
             if (service_email == null || users_to_send_email == null || users_to_send_email.Count == 0) return;
 
             foreach (var usr in users_to_send_email)
             {
-                SendEmail(usr.user, usr.server, isTaskTakesTime);
+                SendEmail(usr.user, usr.email, usr.server, isTaskTakesTime);
             }
         }
 
-        private void SendEmail(string user, string server, bool isTakenTime)
+        private void SendEmail(string user, string email, string server, bool isTakenTime)
         {
             if (service_email == null) return;
 
-            string sender = user + "@fmp-berlin.de";
+            string sender = email;
 
             try
             {
@@ -366,9 +375,9 @@ namespace RemoteDesktopConnection
             data_agms3_software.Sort((a, b) => a.Name.CompareTo(b.Name));
         }
 
-        private List<(string user, string server)> CheckLongerUsers()
+        private List<(string user, string email, string server)> CheckLongerUsers()
         {
-            List<(string user, string server)> user_to_send_email = new();
+            List<(string user, string email, string server)> user_to_send_email = new();
             DateTime currentDate = DateTime.Now;
 
             #region AGMS2
@@ -379,7 +388,7 @@ namespace RemoteDesktopConnection
                 DateTime user_date = DateTime.ParseExact(dgi.Date, "dd/MM/yyyy HH:mm:ss", cultureInfo);
                 TimeSpan difference = currentDate - user_date;
                 if (difference.Days > 0 || difference.Hours > TIMEOUT_HOURS_USER_CONNECTION)
-                    user_to_send_email.Add((dgi.Name, "AGMS2"));
+                    user_to_send_email.Add((dgi.Name, dgi.Email, "AGMS2"));
             }
             #endregion
 
@@ -391,16 +400,16 @@ namespace RemoteDesktopConnection
                 DateTime user_date = DateTime.ParseExact(dgi.Date, "dd/MM/yyyy HH:mm:ss", cultureInfo);
                 TimeSpan difference = currentDate - user_date;
                 if (difference.Days > 0 || difference.Hours > TIMEOUT_HOURS_USER_CONNECTION)
-                    user_to_send_email.Add((dgi.Name, "AGMS3"));
+                    user_to_send_email.Add((dgi.Name, dgi.Email, "AGMS3"));
             }
             #endregion
 
             return user_to_send_email.Distinct().ToList();
         }
 
-        private List<(string user, string server)> CheckLongerTasks()
+        private List<(string user, string email, string server)> CheckLongerTasks()
         {
-            List<(string user, string server)> user_to_send_email = new();
+            List<(string user, string email, string server)> user_to_send_email = new();
             DateTime currentDate = DateTime.Now;
 
             #region AGMS2
@@ -411,7 +420,7 @@ namespace RemoteDesktopConnection
                 DateTime user_date = DateTime.ParseExact(dgi.TaskDate, "dd/MM/yyyy HH:mm:ss", cultureInfo);
                 TimeSpan difference = currentDate - user_date;
                 if (difference.TotalDays > TIMEOUT_DAYS_USER_TASKS)
-                    user_to_send_email.Add((dgi.Name, "AGMS2"));
+                    user_to_send_email.Add((dgi.Name, dgi.Email, "AGMS2"));
             }
             #endregion
 
@@ -423,7 +432,7 @@ namespace RemoteDesktopConnection
                 DateTime user_date = DateTime.ParseExact(dgi.TaskDate, "dd/MM/yyyy HH:mm:ss", cultureInfo);
                 TimeSpan difference = currentDate - user_date;
                 if (difference.TotalDays > TIMEOUT_DAYS_USER_TASKS)
-                    user_to_send_email.Add((dgi.Name, "AGMS3"));
+                    user_to_send_email.Add((dgi.Name, dgi.Email, "AGMS3"));
             }
             #endregion
 
@@ -494,28 +503,12 @@ namespace RemoteDesktopConnection
             }
         }
 
-        private void ButtonConnect_Click(object sender, RoutedEventArgs e)
+        [STAThread]
+        private void ProcessConnection(string ipAddress)
         {
-            dispatcherTimer.Stop();
-            string ipAddress = "";
-            selected_server = -1;
-            if (AGMS_tab.SelectedIndex == 0)//AGMS2
-            {
-                ipAddress = "10.10.65.31";
-                selected_server = 2;
-            }
-            else if (AGMS_tab.SelectedIndex == 1)//AGMS3
-            {
-                ipAddress = "10.10.65.49";
-                selected_server = 3;
-            }
-
             DataGridItemUser dgi;
             if (!CanConnect(selected_server, out dgi))
             {
-
-                ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = false; }));
-
                 //Update google sheets
                 UpdateSheet(selected_server, true, false);
 
@@ -532,6 +525,36 @@ namespace RemoteDesktopConnection
                         (System.Windows.MessageBoxImage)MessageBoxIcon.Warning);
                 dispatcherTimer.Start();
             }
+        }
+
+        private async void ButtonConnect_Click(object sender, RoutedEventArgs e)
+        {
+            dispatcherTimer.Stop();
+            string ipAddress = "";
+            selected_server = -1;
+            if (AGMS_tab.SelectedIndex == 0)//AGMS2
+            {
+                ipAddress = "10.10.65.31";
+                selected_server = 2;
+            }
+            else if (AGMS_tab.SelectedIndex == 1)//AGMS3
+            {
+                ipAddress = "10.10.65.49";
+                selected_server = 3;
+            }
+
+            ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = false; }));
+
+            var wait_screen = Util.Util.CallWaitWindow("Please wait", "Checking users status...");
+            MainGrid.Children.Add(wait_screen);
+            Grid.SetRowSpan(wait_screen, 4);
+            Grid.SetRow(wait_screen, 0);
+            var rows = MainGrid.RowDefinitions;
+            rows[2].Height = new GridLength(2, GridUnitType.Star);
+            await Task.Run(() => ProcessConnection(ipAddress));
+
+            MainGrid.Children.Remove(wait_screen);
+            rows[2].Height = GridLength.Auto;
         }
 
         private bool CanConnect(int selected_server, out DataGridItemUser dgi)
@@ -554,7 +577,7 @@ namespace RemoteDesktopConnection
                 last_refresh = DateTime.Now;
                 LastUpdate.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { LastUpdate.Text = last_refresh.ToString("dd/MM/yyyy HH:mm:ss"); }));
             }
-            ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = true; }));
+            //ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = true; }));
             LoadDatagrid();
 
             if (selected_server == 2 || selected_server == 1)
@@ -592,7 +615,7 @@ namespace RemoteDesktopConnection
                         data_agms2_users = ReadSheetUsers(sheet);
                     }
 
-                    int current_user_index = data_agms2_users.FindIndex(a => a.Name.Equals(TBUser.Text));
+                    int current_user_index = data_agms2_users.FindIndex(a => a.Name.Equals(current_user));
                     if (current_user_index == -1)//Add information
                     {
                         AddInfo(sheet);
@@ -618,7 +641,7 @@ namespace RemoteDesktopConnection
                         data_agms3_users = ReadSheetUsers(sheet);
                     }
 
-                    int current_user_index = data_agms3_users.FindIndex(a => a.Name.Equals(TBUser.Text));
+                    int current_user_index = data_agms3_users.FindIndex(a => a.Name.Equals(current_user));
                     if (current_user_index == -1)//Add information
                     {
                         AddInfo(sheet);
@@ -701,13 +724,13 @@ namespace RemoteDesktopConnection
             try
             {
                 // Specifying Column Range for reading...
-                var range = $"{sheet}!A:E";
+                var range = $"{sheet}!A:F";
                 SpreadsheetsResource.ValuesResource.GetRequest request =
                         service_sheets.Spreadsheets.Values.Get(SpreadsheetId, range);
                 System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
                 // Executing Read Operation...
                 var response = request.Execute();
-                // Getting all records from Column A to E...
+                // Getting all records from Column A to F...
                 IList<IList<object>> values = response.Values;
 
                 if (values != null && values.Count > 0)
@@ -720,7 +743,7 @@ namespace RemoteDesktopConnection
                         string taskDate_str = taskDate.ToString("dd") + "/" + taskDate.ToString("MM") + "/" + taskDate.ToString("yyyy") + " " + taskDate.ToString("HH:mm:ss");
                         DateTime date = Convert.ToDateTime(row[2].ToString());
                         string date_str = date.ToString("dd") + "/" + date.ToString("MM") + "/" + date.ToString("yyyy") + " " + date.ToString("HH:mm:ss");
-                        var row_data = new DataGridItemUser(sheet, row[0].ToString(), date_str, date, taskDate_str, taskDate, Convert.ToBoolean(row[3]), Convert.ToBoolean(row[4]));
+                        var row_data = new DataGridItemUser(sheet, row[0].ToString(), date_str, date, taskDate_str, taskDate, Convert.ToBoolean(row[3]), Convert.ToBoolean(row[4]), Convert.ToString(row[5]));
                         _data.Add(row_data);
                     }
                 }
@@ -743,8 +766,8 @@ namespace RemoteDesktopConnection
             try
             {
                 var ranges = new List<string> {
-                    "AGMS2!A:E",
-                    "AGMS3!A:E",
+                    "AGMS2!A:F",
+                    "AGMS3!A:F",
                     "Installed_software_AGMS2!A:B",
                     "Installed_software_AGMS3!A:B"
                 };
@@ -772,7 +795,7 @@ namespace RemoteDesktopConnection
                                 string taskDate_str = taskDate.ToString("dd") + "/" + taskDate.ToString("MM") + "/" + taskDate.ToString("yyyy") + " " + taskDate.ToString("HH:mm:ss");
                                 DateTime date = Convert.ToDateTime(row[2].ToString());
                                 string date_str = date.ToString("dd") + "/" + date.ToString("MM") + "/" + date.ToString("yyyy") + " " + date.ToString("HH:mm:ss");
-                                var row_data = new DataGridItemUser(range, row[0].ToString(), date_str, date, taskDate_str, taskDate, Convert.ToBoolean(row[3]), Convert.ToBoolean(row[4]));
+                                var row_data = new DataGridItemUser(range, row[0].ToString(), date_str, date, taskDate_str, taskDate, Convert.ToBoolean(row[3]), Convert.ToBoolean(row[4]), Convert.ToString(row[5]));
                                 _data_users.Add(row_data);
                             }
                         }
