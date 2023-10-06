@@ -131,7 +131,7 @@ namespace RemoteDesktopConnection
 
             MainGrid.Children.Remove(wait_screen);
             rows[2].Height = GridLength.Auto;
-            
+
             current_user = GetUser();
             TBUser.Text = current_user;
 
@@ -700,9 +700,9 @@ namespace RemoteDesktopConnection
         private void AddInfo(string sheet)
         {
             // Specifying Column Range for reading...
-            var range = $"{sheet}!A:E";
+            var range = $"{sheet}!A:F";
             var valueRange = new ValueRange();
-            var oblist = new List<object>() { TBUser.Text, DateTime.Now, DateTime.Now, true, false };
+            var oblist = new List<object>() { TBUser.Text, DateTime.Now, DateTime.Now, true, false, (GetUser()) + "@fmp-berlin.de" };
             valueRange.Values = new List<IList<object>> { oblist };
             try
             {
