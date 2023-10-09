@@ -6,6 +6,11 @@
         xmlns:local="clr-namespace:RemoteDesktopConnection"
         mc:Ignorable="d"
         Title="Remote Desktop Connection" Height="505" Width="520" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/start.png">
+    <Window.Resources>
+        <Style x:Key="CustomProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="#478288"/>
+        </Style>
+    </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -62,6 +67,16 @@
                            Grid.Column="1"
                            Grid.ColumnSpan="3"
                            Margin="10,5,0,0"/>
+
+                <ProgressBar 
+                    x:Name="ProgressBarRefresh" 
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Width="60"
+                    Height="10"
+                    Margin="45,5,0,0"
+                    Style="{StaticResource CustomProgressBarStyle}">
+                </ProgressBar>
             </Grid>
 
 

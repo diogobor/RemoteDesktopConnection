@@ -85,6 +85,8 @@ namespace RemoteDesktopConnection
         }
 
         private System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+        private System.Windows.Threading.DispatcherTimer dispatcherProgressBar = new System.Windows.Threading.DispatcherTimer();
+        private double progressbar_time = 0;
         private readonly string ApplicationName = "Google Sheet API .NET Quickstart";
         private readonly string SpreadsheetId = "1ffT7OH5LbFQjaAkjx54CuzQfjIUX6j_rH0WUXzD9tKY";
         private SheetsService service_sheets;
@@ -148,6 +150,10 @@ namespace RemoteDesktopConnection
             SendEmails(CheckLongerUsers(), false);
 
 
+            dispatcherProgressBar.Tick += new EventHandler(dispatcherProgressBar_Tick);
+            dispatcherProgressBar.Interval = new TimeSpan(0, 0, 1);
+            dispatcherProgressBar.Start();
+
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, INTERVAL_TIME_REFRESH_SECONDS);
             dispatcherTimer.Start();
@@ -193,8 +199,17 @@ namespace RemoteDesktopConnection
             }
         }
 
+        private void dispatcherProgressBar_Tick(object sender, EventArgs e)
+        {
+            if (progressbar_time < INTERVAL_TIME_REFRESH_SECONDS)
+                progressbar_time++;
+            else
+                progressbar_time = 0;
+            ProgressBarRefresh.Value = progressbar_time * (100.0 / INTERVAL_TIME_REFRESH_SECONDS);
+        }
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+
             do
             {
                 ReadSheets();
@@ -262,6 +277,7 @@ namespace RemoteDesktopConnection
                             email = data_agms3_users.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
                         SendEmail(TBUser.Text, email, ("AGMS" + selected_server), false);
                         dispatcherTimer.Start();
+                        progressbar_time = 0;
                     }));
                     dispatcherTimer_checkProcessAlive.Stop();
                 }
@@ -523,13 +539,17 @@ namespace RemoteDesktopConnection
                         "The Liu Lab :: Information",
                         (System.Windows.MessageBoxButton)MessageBoxButtons.OK,
                         (System.Windows.MessageBoxImage)MessageBoxIcon.Warning);
+                ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = true; }));
                 dispatcherTimer.Start();
+                progressbar_time = 0;
             }
         }
 
         private async void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
             dispatcherTimer.Stop();
+            progressbar_time = int.MinValue;
+
             string ipAddress = "";
             selected_server = -1;
             if (AGMS_tab.SelectedIndex == 0)//AGMS2
@@ -890,6 +910,7 @@ namespace RemoteDesktopConnection
 
                 LoadDatagrid();
 
+                progressbar_time = 0;
                 dispatcherTimer.Start();
 
                 System.Windows.MessageBox.Show(
