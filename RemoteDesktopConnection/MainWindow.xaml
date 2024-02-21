@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RemoteDesktopConnection"
         mc:Ignorable="d"
-        Title="Remote Desktop Connection" Height="505" Width="520" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/start.png">
+        Title="Remote Desktop Connection" Height="500" Width="520" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/start.png">
     <Window.Resources>
         <Style x:Key="CustomProgressBarStyle" TargetType="ProgressBar">
             <Setter Property="Foreground" Value="#478288"/>
@@ -224,7 +224,7 @@
         <DockPanel Grid.Row="2">
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
-                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2023 - v. 1.6 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
+                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2024 - v. 1.7 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
