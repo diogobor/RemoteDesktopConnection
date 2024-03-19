@@ -197,8 +197,10 @@ namespace RemoteDesktopConnection
                         string email = string.Empty;
                         if (selected_server == 2)
                             email = Management.Users_agms2.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
-                        else
+                        else if (selected_server == 3)
                             email = Management.Users_agms3.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
+                        else
+                            email = Management.Users_agms4.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
                         Connection.SendEmail(TBUser.Text, email, ("AGMS" + selected_server), false);
                         dispatcherTimer.Start();
                         progressbar_time = 0;
@@ -211,7 +213,7 @@ namespace RemoteDesktopConnection
 
         private void LoadDatagrid()
         {
-            if (Control.Management.Users_agms2 == null || Control.Management.Users_agms3 == null) return;
+            if (Control.Management.Users_agms2 == null || Control.Management.Users_agms3 == null || Control.Management.Users_agms4 == null) return;
             DataGridAGMS2.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 DataGridAGMS2.ItemsSource = null;
@@ -226,6 +228,13 @@ namespace RemoteDesktopConnection
                 DataGridAGMS3.ItemsSource = Control.Management.Users_agms3;
             }));
 
+            DataGridAGMS4.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                DataGridAGMS4.ItemsSource = null;
+                Control.Management.Users_agms4.Sort((a, b) => b.DateOriginal.CompareTo(a.DateOriginal));
+                DataGridAGMS4.ItemsSource = Control.Management.Users_agms4;
+            }));
+
             if (Control.Management.Software_agms2 == null || Control.Management.Software_agms3 == null) return;
             DataGridAGMS2_Software.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
@@ -237,6 +246,12 @@ namespace RemoteDesktopConnection
             {
                 DataGridAGMS3_Software.ItemsSource = null;
                 DataGridAGMS3_Software.ItemsSource = Control.Management.Software_agms3;
+            }));
+            
+            DataGridAGMS4_Software.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                DataGridAGMS4_Software.ItemsSource = null;
+                DataGridAGMS4_Software.ItemsSource = Control.Management.Software_agms4;
             }));
         }
 
@@ -280,13 +295,21 @@ namespace RemoteDesktopConnection
                 else
                     return false;
             }
+            else if (selected_server == 4)
+            {
+                _user = Management.Users_agms4.Where(a => a.IsLogged).FirstOrDefault();
+                if (_user != null)
+                    return true;
+                else
+                    return false;
+            }
 
             _user = null;
             return true;
         }
 
         [STAThread]
-        private void ProcessConnection(string ipAddress)
+        private void ProcessConnection()
         {
             Model.User _user;
             if (!CanConnect(selected_server, out _user))
@@ -296,7 +319,7 @@ namespace RemoteDesktopConnection
 
                 string username = "sysfliu";
                 string password = "Agms2023!";
-                Management.ConnectAGMS(ipAddress, username, password, out error_taken_time_connected);
+                Management.ConnectAGMS(username, password, out error_taken_time_connected);
                 dispatcherTimer_checkProcessAlive.Start();
             }
             else
@@ -317,17 +340,21 @@ namespace RemoteDesktopConnection
             dispatcherTimer.Stop();
             progressbar_time = int.MinValue;
 
-            string ipAddress = "";
             selected_server = -1;
             if (AGMS_tab.SelectedIndex == 0)//AGMS2
             {
-                ipAddress = "10.10.65.31";
+                Management.IP_address = "10.10.65.31";
                 selected_server = 2;
             }
             else if (AGMS_tab.SelectedIndex == 1)//AGMS3
             {
-                ipAddress = "10.10.65.49";
+                Management.IP_address = "10.10.65.49";
                 selected_server = 3;
+            }
+            else if (AGMS_tab.SelectedIndex == 2)//AGMS4
+            {
+                Management.IP_address = "10.10.65.40";
+                selected_server = 4;
             }
 
             ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = false; }));
@@ -338,7 +365,7 @@ namespace RemoteDesktopConnection
             Grid.SetRow(wait_screen, 0);
             var rows = MainGrid.RowDefinitions;
             rows[2].Height = new GridLength(2, GridUnitType.Star);
-            await Task.Run(() => ProcessConnection(ipAddress));
+            await Task.Run(() => ProcessConnection());
 
             MainGrid.Children.Remove(wait_screen);
             rows[2].Height = GridLength.Auto;
@@ -357,6 +384,8 @@ namespace RemoteDesktopConnection
                     selected_server = 2;
                 else if (AGMS_tab.SelectedIndex == 1)//AGMS3
                     selected_server = 3;
+                else if (AGMS_tab.SelectedIndex == 2)//AGMS4
+                    selected_server = 4;
 
                 var response = System.Windows.Forms.MessageBox.Show($"Has your task been finished?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -393,6 +422,11 @@ namespace RemoteDesktopConnection
         }
 
         private void DataGridAGMS3_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+        }
+
+        private void DataGridAGMS4_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }

@@ -110,8 +110,10 @@ namespace RemoteDesktopConnection.Control.Database
                 var ranges = new List<string> {
                     "AGMS2!A:F",
                     "AGMS3!A:F",
+                    "AGMS4!A:F",
                     "Installed_software_AGMS2!A:B",
-                    "Installed_software_AGMS3!A:B"
+                    "Installed_software_AGMS3!A:B",
+                    "Installed_software_AGMS4!A:B"
                 };
                 var request = new SpreadsheetsResource.ValuesResource.BatchGetRequest(service_sheets, SpreadsheetId);
                 request.Ranges = ranges;
@@ -182,17 +184,21 @@ namespace RemoteDesktopConnection.Control.Database
 
             Management.Users_agms2 = new();
             Management.Users_agms3 = new();
+            Management.Users_agms4 = new();
             Management.Software_agms2 = new();
             Management.Software_agms3 = new();
+            Management.Software_agms4 = new();
             if (_users.Count > 0)
             {
                 Management.Users_agms2 = _users.Where(a => a.Server == "AGMS2").ToList();
                 Management.Users_agms3 = _users.Where(a => a.Server == "AGMS3").ToList();
+                Management.Users_agms4 = _users.Where(a => a.Server == "AGMS4").ToList();
             }
             if (_softwares.Count > 0)
             {
                 Management.Software_agms2 = _softwares.Where(a => a.Server == "AGMS2").ToList();
                 Management.Software_agms3 = _softwares.Where(a => a.Server == "AGMS3").ToList();
+                Management.Software_agms4 = _softwares.Where(a => a.Server == "AGMS4").ToList();
             }
 
         }
@@ -405,6 +411,32 @@ namespace RemoteDesktopConnection.Control.Database
 
                         UpdateInfo(sheet, current_user_index, isLogged, hasTaskFinished, update_date);
                         var update_data = Management.Users_agms3[current_user_index];
+                        update_data.IsLogged = isLogged;
+                        update_data.HasTaskFinished = hasTaskFinished;
+                    }
+                }
+                else if (selected_server == 4)
+                {
+                    Management.Users_agms4 = ReadSheetUsers(sheet);
+                    while (Management.Users_agms4.Count == 0)
+                    {
+                        System.Threading.Thread.Sleep(OFFSET_TIME_REFRESH_MILLISECONDS);
+                        Management.Users_agms4 = ReadSheetUsers(sheet);
+                    }
+
+                    int current_user_index = Management.Users_agms4.FindIndex(a => a.Name.Equals(Management.GetUser()));
+                    if (current_user_index == -1)//Add information
+                    {
+                        AddInfo(sheet);
+                    }
+                    else
+                    {
+                        //if task status is true (has been finished), then date can be updated at the moment of login
+                        var current_user_previous_task_status = Management.Users_agms4[current_user_index].HasTaskFinished;
+                        bool update_date = current_user_previous_task_status;
+
+                        UpdateInfo(sheet, current_user_index, isLogged, hasTaskFinished, update_date);
+                        var update_data = Management.Users_agms4[current_user_index];
                         update_data.IsLogged = isLogged;
                         update_data.HasTaskFinished = hasTaskFinished;
                     }

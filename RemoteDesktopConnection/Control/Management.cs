@@ -25,15 +25,18 @@ namespace RemoteDesktopConnection.Control
         /// </summary>
         public static List<Model.User> Users_agms2 = new();
         public static List<Model.User> Users_agms3 = new();
+        public static List<Model.User> Users_agms4 = new();
         public static List<Model.Software> Software_agms2 = new();
         public static List<Model.Software> Software_agms3 = new();
-        public const int TIMEOUT_HOURS_USER_CONNECTION = 2;
+        public static List<Model.Software> Software_agms4 = new();
+        public const int TIMEOUT_HOURS_USER_CONNECTION = 0;
         public const int INTERVAL_TIME_REFRESH_SECONDS = 100;
         public static DateTime last_refresh;
         public static Process ConnectServerProcess;
         public static bool IsConnected { get; set; } = false;
         public static DateTime Connected_initial_time;
         public static int CurrentPID { get; set; } = -1;
+        public static string IP_address { get; set; } = string.Empty;
 
         /// <summary>
         /// private variables
@@ -89,6 +92,18 @@ namespace RemoteDesktopConnection.Control
             }
             #endregion
 
+            #region AGMS4
+            userslogged = Users_agms4.Where(a => a.IsLogged).ToList();
+
+            foreach (var dgi in userslogged)
+            {
+                DateTime user_date = DateTime.ParseExact(dgi.Date, "dd/MM/yyyy HH:mm:ss", cultureInfo);
+                TimeSpan difference = currentDate - user_date;
+                if (difference.Days > 0 || difference.Hours > TIMEOUT_HOURS_USER_CONNECTION)
+                    user_to_send_email.Add((dgi.Name, dgi.Email, "AGMS4"));
+            }
+            #endregion
+
             return user_to_send_email.Distinct().ToList();
         }
 
@@ -124,21 +139,23 @@ namespace RemoteDesktopConnection.Control
             return user_to_send_email.Distinct().ToList();
         }
 
-        public static void ConnectAGMS(string ipAddress, string username, string password, out string error)
+        public static void ConnectAGMS(string username, string password, out string error)
         {
             try
             {
+                if (String.IsNullOrEmpty(IP_address))
+                    throw new Exception("ERROR: Invalid ip address!");
                 NotAskForPwdOnRDC();
 
                 var process = new Process();
                 process.StartInfo.FileName = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\system32\cmdKey.exe");
-                process.StartInfo.Arguments = String.Format(@"/generic:{0} /user:{1} /pass:{2}", ipAddress, username, password);
+                process.StartInfo.Arguments = String.Format(@"/generic:{0} /user:{1} /pass:{2}", IP_address, username, password);
                 process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 process.Start();
 
                 ConnectServerProcess = new Process();
                 ConnectServerProcess.StartInfo.FileName = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\system32\mstsc.exe");
-                ConnectServerProcess.StartInfo.Arguments = String.Format(@"/f /v:{0}", ipAddress);
+                ConnectServerProcess.StartInfo.Arguments = String.Format(@"/f /v:{0}", IP_address);
                 ConnectServerProcess.EnableRaisingEvents = true;
                 ConnectServerProcess.StartInfo.UseShellExecute = false;
                 ConnectServerProcess.StartInfo.RedirectStandardOutput = true;

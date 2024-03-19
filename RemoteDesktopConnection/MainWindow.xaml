@@ -220,11 +220,79 @@
                     </TabItem>
                 </TabControl>
             </TabItem>
+            <TabItem Header="AGMS4">
+                <TabControl>
+                    <TabItem Header="Users">
+                        <DataGrid
+                            x:Name="DataGridAGMS4"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            AlternatingRowBackground="WhiteSmoke"
+                            LoadingRow="DataGridAGMS4_LoadingRow"
+                            VerticalScrollBarVisibility="Auto"
+                            MinHeight="310"
+                            MaxHeight="310">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                            Header="User"
+                            Binding="{Binding Name}"
+                            MaxWidth="155"
+                            MinWidth="150"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Date"
+                            Binding="{Binding Date}"
+                            MinWidth="130"
+                            MaxWidth="130"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Logged"
+                            Binding="{Binding IsLogged}"
+                            MinWidth="65"
+                            MaxWidth="65"
+                            CanUserSort="False"/>
+                                <DataGridTextColumn
+                            Header="Task has finished"
+                            Binding="{Binding HasTaskFinished}"
+                            MinWidth="100"
+                            MaxWidth="100"
+                            CanUserSort="False"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem Header="Software">
+                        <DataGrid
+                            x:Name="DataGridAGMS4_Software"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            AlternatingRowBackground="WhiteSmoke"
+                            LoadingRow="DataGridAGMS4_LoadingRow"
+                            VerticalScrollBarVisibility="Auto"
+                            MinHeight="310"
+                            MaxHeight="310">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Header="Software"
+                                    Binding="{Binding Name}"
+                                    MaxWidth="300"
+                                    MinWidth="200"
+                                    CanUserSort="False"/>
+                                <DataGridTextColumn
+                                    Header="Version"
+                                    Binding="{Binding Version}"
+                                    MaxWidth="300"
+                                    MinWidth="200"
+                                    CanUserSort="False"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
         </TabControl>
         <DockPanel Grid.Row="2">
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
-                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2024 - v. 1.7 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
+                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2024 - v. 1.8 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
