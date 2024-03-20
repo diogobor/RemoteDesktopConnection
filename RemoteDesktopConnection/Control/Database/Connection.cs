@@ -308,9 +308,9 @@ namespace RemoteDesktopConnection.Control.Database
                 string message = "";
 
                 if (isTakenTime)
-                    message = $"To: {sender}\r\nSubject: WARNING: Check the {server} server\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>You have started a task on the {server} server and it is taking a long time to finish. Verify that this task completed. If so, discard this message and update the status on <u><i>'Remote Desktop Connection'</i></u> app.<br/><br/>Best regards,<br/>AG Fliu</p>";
+                    message = $"To: {sender}\r\nSubject: WARNING: Check the {server} server\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>You have started a task on the {server} server and it is taking a long time to finish. Verify that this task completed. If so, discard this message and update the status on <u><i>'Remote Desktop Connection'</i></u> app.<br/><br/>Best regards,<br/>AG FLiu</p>";
                 else
-                    message = $"To: {sender}\r\nSubject: WARNING: Connection on {server} server\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>You have been disconnected from the {server} server because you have been connected for more than 3 hours.<br/>Please check if your tasks have been finished. If so, update the status on <u><i>'Remote Desktop Connection'</i></u> app.<br/><br/>Best regards,<br/>AG Fliu</p>";
+                    message = $"To: {sender}\r\nSubject: WARNING: Connection on {server} server\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>You have been disconnected from the {server} server because you have been connected for more than 1 hour.<br/>Please check if your tasks have been finished. If so, update the status on <u><i>'Remote Desktop Connection'</i></u> app.<br/><br/>Best regards,<br/>AG FLiu</p>";
                 var msg = new Google.Apis.Gmail.v1.Data.Message();
                 msg.Raw = Base64UrlEncode(message.ToString());
                 service_email.Users.Messages.Send(msg, "me").Execute();

@@ -110,7 +110,44 @@ namespace RemoteDesktopConnection
         public MainWindow()
         {
             InitializeComponent();
+            AddHyperlink(InfoLabLabel, "The Liu Lab @ 2024 - v. 1.8 - All rights reserved!");
             StartApp();
+        }
+        private void AddHyperlink(TextBlock textBlock, string processing_time)
+        {
+            textBlock.Inlines.Clear();
+
+            // Create a new Hyperlink
+            Hyperlink hyperlink = new Hyperlink();
+            hyperlink.Inlines.Add("Diogo Borges Lima");
+            hyperlink.NavigateUri = new System.Uri("https://diogobor.droppages.com/");
+            hyperlink.RequestNavigate += Hyperlink_RequestNavigate;
+            // Add the Hyperlink to the TextBlock
+            textBlock.Inlines.Add(processing_time);
+            textBlock.Inlines.Add(" Developed by ");
+            textBlock.Inlines.Add(hyperlink);
+            textBlock.Inlines.Add(".");
+        }
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            // Open the link in the default web browser
+            try
+            {
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = e.Uri.ToString(),
+                    UseShellExecute = true,
+                });
+            }
+            catch (Exception)
+            {
+                System.Windows.MessageBox.Show(
+                        "There is no internet connection.",
+                        "Warning",
+                        (System.Windows.MessageBoxButton)MessageBoxButtons.OK,
+                        (System.Windows.MessageBoxImage)MessageBoxIcon.Information);
+                throw;
+            }
         }
         private void Window_Closed(object sender, EventArgs e)
         {

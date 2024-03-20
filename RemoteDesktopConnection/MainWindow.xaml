@@ -292,7 +292,7 @@
         <DockPanel Grid.Row="2">
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem>
-                    <TextBlock Name="InfoLabLabel">The Liu Lab @ 2024 - v. 1.8 - All rights reserved! Developed by Diogo Borges Lima.</TextBlock>
+                    <TextBlock Name="InfoLabLabel"/>
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
