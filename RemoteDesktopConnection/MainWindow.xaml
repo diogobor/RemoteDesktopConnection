@@ -110,17 +110,29 @@
                             MaxWidth="130"
                             CanUserSort="False"/>
                                 <DataGridTextColumn
-                            Header="Logged"
-                            Binding="{Binding IsLogged}"
+                            Header="Logged in"
+                            Binding="{Binding _isLogged}"
                             MinWidth="65"
                             MaxWidth="65"
-                            CanUserSort="False"/>
+                            CanUserSort="False">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                                 <DataGridTextColumn
                             Header="Task has finished"
-                            Binding="{Binding HasTaskFinished}"
+                            Binding="{Binding _hasTaskFinished}"
                             MinWidth="100"
                             MaxWidth="100"
-                            CanUserSort="False"/>
+                            CanUserSort="False">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -178,17 +190,29 @@
                             MaxWidth="130"
                             CanUserSort="False"/>
                                 <DataGridTextColumn
-                            Header="Logged"
-                            Binding="{Binding IsLogged}"
+                            Header="Logged in"
+                            Binding="{Binding _isLogged}"
                             MinWidth="65"
                             MaxWidth="65"
-                            CanUserSort="False"/>
+                            CanUserSort="False">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                                 <DataGridTextColumn
                             Header="Task has finished"
-                            Binding="{Binding HasTaskFinished}"
+                            Binding="{Binding _hasTaskFinished}"
                             MinWidth="100"
                             MaxWidth="100"
-                            CanUserSort="False"/>
+                            CanUserSort="False">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>
@@ -246,17 +270,29 @@
                             MaxWidth="130"
                             CanUserSort="False"/>
                                 <DataGridTextColumn
-                            Header="Logged"
-                            Binding="{Binding IsLogged}"
+                            Header="Logged in"
+                            Binding="{Binding _isLogged}"
                             MinWidth="65"
                             MaxWidth="65"
-                            CanUserSort="False"/>
+                            CanUserSort="False">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                                 <DataGridTextColumn
                             Header="Task has finished"
-                            Binding="{Binding HasTaskFinished}"
+                            Binding="{Binding _hasTaskFinished}"
                             MinWidth="100"
                             MaxWidth="100"
-                            CanUserSort="False"/>
+                            CanUserSort="False">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </TabItem>

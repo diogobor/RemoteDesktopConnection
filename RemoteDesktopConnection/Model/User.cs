@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +15,9 @@ namespace RemoteDesktopConnection.Model
         public string TaskDate { get; set; }
         public DateTime DateOriginal { get; set; }
         public DateTime TaskDateriginal { get; set; }
+        public string _isLogged { get; set; }
         public bool IsLogged { get; set; }
+        public string _hasTaskFinished { get; set; }
         public bool HasTaskFinished { get; set; }
         public string Email { get; set; }
 

@@ -110,7 +110,8 @@ namespace RemoteDesktopConnection
         public MainWindow()
         {
             InitializeComponent();
-            AddHyperlink(InfoLabLabel, "The Liu Lab @ 2024 - v. 1.8 - All rights reserved!");
+            DateTime dt = DateTime.Now;
+            AddHyperlink(InfoLabLabel, $"The Liu Lab @ {dt.Year} - v. 1.9 - All rights reserved!");
             StartApp();
         }
         private void AddHyperlink(TextBlock textBlock, string processing_time)
@@ -255,21 +256,39 @@ namespace RemoteDesktopConnection
             {
                 DataGridAGMS2.ItemsSource = null;
                 Control.Management.Users_agms2.Sort((a, b) => b.DateOriginal.CompareTo(a.DateOriginal));
-                DataGridAGMS2.ItemsSource = Control.Management.Users_agms2;
+                List<Model.User> users = Control.Management.Users_agms2;
+                Parallel.ForEach(users, a =>
+                {
+                    a._isLogged = a.IsLogged ? "✓" : "-";
+                    a._hasTaskFinished = a.HasTaskFinished ? "✓" : "-";
+                });
+                DataGridAGMS2.ItemsSource = users;
             }));
 
             DataGridAGMS3.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 DataGridAGMS3.ItemsSource = null;
                 Control.Management.Users_agms3.Sort((a, b) => b.DateOriginal.CompareTo(a.DateOriginal));
-                DataGridAGMS3.ItemsSource = Control.Management.Users_agms3;
+                List<Model.User> users = Control.Management.Users_agms3;
+                Parallel.ForEach(users, a =>
+                {
+                    a._isLogged = a.IsLogged ? "✓" : "-";
+                    a._hasTaskFinished = a.HasTaskFinished ? "✓" : "-";
+                });
+                DataGridAGMS3.ItemsSource = users;
             }));
 
             DataGridAGMS4.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 DataGridAGMS4.ItemsSource = null;
                 Control.Management.Users_agms4.Sort((a, b) => b.DateOriginal.CompareTo(a.DateOriginal));
-                DataGridAGMS4.ItemsSource = Control.Management.Users_agms4;
+                List<Model.User> users = Control.Management.Users_agms4;
+                Parallel.ForEach(users, a =>
+                {
+                    a._isLogged = a.IsLogged ? "✓" : "-";
+                    a._hasTaskFinished = a.HasTaskFinished ? "✓" : "-";
+                });
+                DataGridAGMS4.ItemsSource = users;
             }));
 
             if (Control.Management.Software_agms2 == null || Control.Management.Software_agms3 == null) return;
@@ -284,7 +303,7 @@ namespace RemoteDesktopConnection
                 DataGridAGMS3_Software.ItemsSource = null;
                 DataGridAGMS3_Software.ItemsSource = Control.Management.Software_agms3;
             }));
-            
+
             DataGridAGMS4_Software.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 DataGridAGMS4_Software.ItemsSource = null;
@@ -349,7 +368,9 @@ namespace RemoteDesktopConnection
         private void ProcessConnection()
         {
             Model.User _user;
-            if (!CanConnect(selected_server, out _user))
+            bool hasConnectedUser = CanConnect(selected_server, out _user);
+
+            if (!hasConnectedUser || _user.Name.Equals(current_user))
             {
                 //Update google sheets
                 Connection.UpdateSheet(selected_server, true, false);
@@ -362,7 +383,7 @@ namespace RemoteDesktopConnection
             else
             {
                 System.Windows.MessageBox.Show(
-                        "The following user is connected on AGMS" + selected_server + ": " + (_user != null ? _user.Name : "---") + "!\nPlease contact him/her to log out the server or try later!",
+                        "The following user is connected on AGMS" + selected_server + ": " + (_user != null ? _user.Name : "---") + "!\nPlease contact him/her to log out the server or try again later!",
                         "The Liu Lab :: Information",
                         (System.Windows.MessageBoxButton)MessageBoxButtons.OK,
                         (System.Windows.MessageBoxImage)MessageBoxIcon.Warning);
