@@ -9,6 +9,8 @@ using Google.Apis.Util.Store;
 using Microsoft.VisualBasic.ApplicationServices;
 using RemoteDesktopConnection.Control;
 using RemoteDesktopConnection.Control.Database;
+using RemoteDesktopConnection.Util;
+using RemoteDesktopConnection.Viewer;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
@@ -36,6 +39,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace RemoteDesktopConnection
@@ -47,15 +51,14 @@ namespace RemoteDesktopConnection
     {
         private System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
         private System.Windows.Threading.DispatcherTimer dispatcherProgressBar = new System.Windows.Threading.DispatcherTimer();
+        private System.Windows.Threading.DispatcherTimer dispatcherTimer_checkProcessAlive = new System.Windows.Threading.DispatcherTimer();
+        private System.Windows.Threading.DispatcherTimer dispatcherTimer_checkCloseSoftware = new System.Windows.Threading.DispatcherTimer();
         private double progressbar_time = 0;
         private readonly string ApplicationName = "Google Sheet API .NET Quickstart";
 
-
+        private int timeUntilCloseSoftware { get; set; }
         private string error_taken_time_connected = "";
         private string current_user = "";
-
-        private System.Windows.Threading.DispatcherTimer dispatcherTimer_checkProcessAlive = new System.Windows.Threading.DispatcherTimer();
-
 
         private int selected_server = -1;
 
@@ -104,6 +107,10 @@ namespace RemoteDesktopConnection
             dispatcherTimer.Interval = new TimeSpan(0, 0, Management.INTERVAL_TIME_REFRESH_SECONDS);
             dispatcherTimer.Start();
 
+            dispatcherTimer_checkCloseSoftware.Tick += new EventHandler(dispatcherTimer_checkCloseSoftware_Tick);
+            dispatcherTimer_checkCloseSoftware.Interval = new TimeSpan(0, 0, Management.INTERVAL_TIME_REFRESH_SECONDS);
+            dispatcherTimer_checkCloseSoftware.Start();
+
             dispatcherTimer_checkProcessAlive.Tick += new EventHandler(dispatcherTimer_checkProcessAlive_Tick);
             dispatcherTimer_checkProcessAlive.Interval = new TimeSpan(0, 0, 1);
         }
@@ -111,7 +118,7 @@ namespace RemoteDesktopConnection
         {
             InitializeComponent();
             DateTime dt = DateTime.Now;
-            AddHyperlink(InfoLabLabel, $"The Liu Lab @ {dt.Year} - v. 1.9 - All rights reserved!");
+            AddHyperlink(InfoLabLabel, $"The Liu Lab @ {dt.Year} - v. {Util.Util.GetVersion()} - All rights reserved!");
             StartApp();
         }
         private void AddHyperlink(TextBlock textBlock, string processing_time)
@@ -194,19 +201,19 @@ namespace RemoteDesktopConnection
             do
             {
                 Connection.ReadSheets();
-                if (Management.Users_agms2.Count > 0 && Management.Users_agms3.Count > 0)
+                if (Management.Users_agms2.Count > 0 && Management.Users_agms3.Count > 0 && Management.Users_agms4.Count > 0)
                 {
                     Management.last_refresh = DateTime.Now;
                     LastUpdate.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { LastUpdate.Text = Management.last_refresh.ToString("dd/MM/yyyy HH:mm:ss"); }));
                 }
 
-                if (Management.Users_agms2.Count == 0 || Management.Users_agms3.Count == 0)
+                if (Management.Users_agms2.Count == 0 || Management.Users_agms3.Count == 0 || Management.Users_agms4.Count == 0)
                 {
                     ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = false; }));
                     System.Threading.Thread.Sleep(OFFSET_TIME_REFRESH_MILLISECONDS);
                 }
             }
-            while (Management.Users_agms2.Count == 0 || Management.Users_agms3.Count == 0);
+            while (Management.Users_agms2.Count == 0 || Management.Users_agms3.Count == 0 || Management.Users_agms4.Count == 0);
             ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = true; }));
 
             LoadDatagrid();
@@ -247,6 +254,56 @@ namespace RemoteDesktopConnection
                     Management.CurrentPID = -1;
                 }
             }
+        }
+        private void dispatcherTimer_checkCloseSoftware_Tick(object sender, EventArgs e)
+        {
+            ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (ButtonConnect.IsEnabled == true)
+                {
+                    if (timeUntilCloseSoftware > 2)
+                    {
+                        dispatcherProgressBar.Stop();
+                        dispatcherTimer_checkCloseSoftware.Stop();
+                        dispatcherTimer_checkProcessAlive.Stop();
+                        dispatcherTimer.Stop();
+                        progressbar_time = int.MinValue;
+                        timeUntilCloseSoftware = 0;
+
+                        IdleWindow iw = new IdleWindow();
+                        iw.ShowDialog();
+
+                        if (iw.CloseSoftware == true)
+                        {
+                            TBUser.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+                            {
+                                string email = string.Empty;
+                                if (selected_server == 2)
+                                    email = Management.Users_agms2.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
+                                else if (selected_server == 3)
+                                    email = Management.Users_agms3.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
+                                else
+                                    email = Management.Users_agms4.Where(a => a.Name == TBUser.Text).FirstOrDefault().Email;
+                                Connection.SendEmail(TBUser.Text, email, "", false);
+                                progressbar_time = 0;
+                            }));
+
+                            this.Close();
+                        }
+                        else
+                        {
+                            progressbar_time = 0;
+                            dispatcherProgressBar.Start();
+                            dispatcherTimer_checkCloseSoftware.Start();
+                            dispatcherTimer.Start();
+                        }
+                    }
+                    else
+                        timeUntilCloseSoftware++;
+                }
+
+            }));
+
         }
 
         private void LoadDatagrid()

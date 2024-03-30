@@ -159,12 +159,18 @@ namespace RemoteDesktopConnection.Control.Database
                     }
                 }
             }
+            catch (System.Threading.Tasks.TaskCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+            }
             catch (Google.GoogleApiException exc)
             {
-                throw new Exception("reset_database");
+                if (!(exc.Error.Code == 500 && exc.Error.Message.Contains("The service sheets has thrown an exception")))
+                    throw new Exception("reset_database");
             }
             catch (System.FormatException e)
             {
+                Console.WriteLine(e.Message);
                 if (e.Message.Contains("was not recognized as a valid"))
                 {
                     System.Windows.MessageBox.Show(
@@ -179,7 +185,7 @@ namespace RemoteDesktopConnection.Control.Database
             }
             catch (Exception e)
             {
-                throw;
+                Console.WriteLine(e.Message);
             }
 
             Management.Users_agms2 = new();
@@ -309,8 +315,10 @@ namespace RemoteDesktopConnection.Control.Database
 
                 if (isTakenTime)
                     message = $"To: {sender}\r\nSubject: WARNING: Check the {server} server\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>You have started a task on the {server} server and it is taking a long time to finish. Verify that this task completed. If so, discard this message and update the status on <u><i>'Remote Desktop Connection'</i></u> app.<br/><br/>Best regards,<br/>AG FLiu</p>";
-                else
+                else if (!String.IsNullOrEmpty(server))
                     message = $"To: {sender}\r\nSubject: WARNING: Connection on {server} server\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>You have been disconnected from the {server} server because you have been connected for more than 1 hour.<br/>Please check if your tasks have been finished. If so, update the status on <u><i>'Remote Desktop Connection'</i></u> app.<br/><br/>Best regards,<br/>AG FLiu</p>";
+                else
+                    message = $"To: {sender}\r\nSubject: WARNING: Remote Deskop Connection was closed\r\nContent-Type: text/html;charset=utf-8\r\n\r\n<p>Dear {user_capital},<br/><br/>The Remote Desktop Connection app was closed because you were inactive for more than 5 minutes.<br/><br/>Best regards,<br/>AG FLiu</p>";
                 var msg = new Google.Apis.Gmail.v1.Data.Message();
                 msg.Raw = Base64UrlEncode(message.ToString());
                 service_email.Users.Messages.Send(msg, "me").Execute();

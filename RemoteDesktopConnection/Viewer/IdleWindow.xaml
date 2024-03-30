@@ -1,0 +1,57 @@
+﻿<Window x:Class="RemoteDesktopConnection.Viewer.IdleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RemoteDesktopConnection.Viewer"
+        mc:Ignorable="d"
+        Title="Closing app..." Height="150" Width="200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="/start.png">
+    <Window.Resources>
+        <Style x:Key="CustomProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="#478288"/>
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="IdleGrid">
+        <GroupBox
+            Header=""
+            Margin="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Are you there ?"
+                           Margin="5"
+                           Grid.Row="0"
+                           HorizontalAlignment="Center"/>
+                <ProgressBar 
+                    x:Name="ProgressBarRefresh"
+                    Width="120"
+                    Height="10"
+                    Margin="5"
+                    Grid.Row="1"
+                    Style="{StaticResource CustomProgressBarStyle}">
+                </ProgressBar>
+                <Button x:Name="ButtonClose"
+                        Click="ButtonClose_Click"
+                        Padding="10,1,10,1" 
+                        Height="20"
+                        HorizontalAlignment="Center" 
+                        Cursor="Hand"
+                        Margin="5"
+                        Grid.Row="2">
+                            <StackPanel Orientation="Horizontal">
+                                <DockPanel>
+                                    <Image x:Name="run_btn_img" Source="/start.png" />
+                                </DockPanel>
+                                <TextBlock x:Name="run_btn_text" Margin="10,0,0,0" Width="18">Yes</TextBlock>
+                            </StackPanel>
+                </Button>
+            </Grid>
+            
+            
+        </GroupBox>
+
+    </Grid>
+</Window>

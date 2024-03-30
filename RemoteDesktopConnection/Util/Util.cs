@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 using RemoteDesktopConnection.Viewer;
+using System.Reflection;
 
 namespace RemoteDesktopConnection.Util
 {
@@ -18,6 +19,22 @@ namespace RemoteDesktopConnection.Util
             Grid.SetRowSpan(waitScreen, 2);
             waitScreen.Margin = new Thickness(0, 0, 0, 0);
             return waitScreen;
+        }
+   
+        public static string GetVersion()
+        {
+            Version? version = null;
+            try
+            {
+                version = Assembly.GetExecutingAssembly()?.GetName()?.Version;
+            }
+            catch (Exception e)
+            {
+                //Unable to retrieve version number
+                Console.WriteLine("", e);
+                return "";
+            }
+            return version.Major + "." + version.Minor;
         }
     }
 }
