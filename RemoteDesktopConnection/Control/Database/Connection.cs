@@ -165,7 +165,7 @@ namespace RemoteDesktopConnection.Control.Database
                             for (int i = 1; i < values.Count; i++)
                             {
                                 var row = values[i];
-                                var row_data = new Model.Server(row[0].ToString(), Convert.ToBoolean(row[1]));
+                                var row_data = new Model.Server(row[0].ToString(), Convert.ToBoolean(row[1]), row[2].ToString());
                                 _servers.Add(row_data);
                             }
                         }

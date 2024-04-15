@@ -458,8 +458,14 @@ namespace RemoteDesktopConnection
             if (current_server == null) return false;
 
             if (current_server.IsMaintenace == true)
-                return true;
-            return false;
+            {
+                if (current_user.Equals(current_server.Administrator))
+                    return false;
+            }
+            else
+                return false;
+
+            return true;
         }
 
         private async void ButtonConnect_Click(object sender, RoutedEventArgs e)
@@ -484,7 +490,7 @@ namespace RemoteDesktopConnection
                 selected_server = 4;
             }
 
-            if(isMaintenance())
+            if (isMaintenance())
             {
                 System.Windows.MessageBox.Show(
                 "AGMS" + selected_server + " is under maintenance. Contact the administrator for more information.",
