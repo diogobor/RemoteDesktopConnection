@@ -103,6 +103,7 @@ namespace RemoteDesktopConnection.Control.Database
         {
             List<Model.User> _users = new();
             List<Model.Software> _softwares = new();
+            List<Model.Server> _servers = new();
 
             try
             {
@@ -113,7 +114,8 @@ namespace RemoteDesktopConnection.Control.Database
                     "AGMS4!A:F",
                     "Installed_software_AGMS2!A:B",
                     "Installed_software_AGMS3!A:B",
-                    "Installed_software_AGMS4!A:B"
+                    "Installed_software_AGMS4!A:B",
+                    "Maintenance!A:C",
                 };
                 var request = new SpreadsheetsResource.ValuesResource.BatchGetRequest(service_sheets, SpreadsheetId);
                 request.Ranges = ranges;
@@ -156,6 +158,18 @@ namespace RemoteDesktopConnection.Control.Database
                                 _softwares.Add(row_data);
                             }
                         }
+                        else if (values[0][0] != null && values[0][0].ToString().StartsWith("Server"))
+                        {
+                            var range = Regex.Split(valueRange.Range, "!")[0];
+
+                            for (int i = 1; i < values.Count; i++)
+                            {
+                                var row = values[i];
+                                var row_data = new Model.Server(row[0].ToString(), Convert.ToBoolean(row[1]));
+                                _servers.Add(row_data);
+                            }
+                        }
+
                     }
                 }
             }
@@ -194,6 +208,12 @@ namespace RemoteDesktopConnection.Control.Database
             Management.Software_agms2 = new();
             Management.Software_agms3 = new();
             Management.Software_agms4 = new();
+            Management.Servers = new();
+
+            if (_servers.Count > 0)
+            {
+                Management.Servers = _servers;
+            }
             if (_users.Count > 0)
             {
                 Management.Users_agms2 = _users.Where(a => a.Server == "AGMS2").ToList();

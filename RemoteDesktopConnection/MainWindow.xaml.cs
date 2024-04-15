@@ -9,6 +9,7 @@ using Google.Apis.Util.Store;
 using Microsoft.VisualBasic.ApplicationServices;
 using RemoteDesktopConnection.Control;
 using RemoteDesktopConnection.Control.Database;
+using RemoteDesktopConnection.Model;
 using RemoteDesktopConnection.Util;
 using RemoteDesktopConnection.Viewer;
 using System;
@@ -450,6 +451,17 @@ namespace RemoteDesktopConnection
             }
         }
 
+        private bool isMaintenance()
+        {
+            Connection.ReadSheets();
+            Model.Server? current_server = Management.Servers.Where(a => a.Index == selected_server).FirstOrDefault();
+            if (current_server == null) return false;
+
+            if (current_server.IsMaintenace == true)
+                return true;
+            return false;
+        }
+
         private async void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
             dispatcherTimer.Stop();
@@ -470,6 +482,16 @@ namespace RemoteDesktopConnection
             {
                 Management.IP_address = "10.10.65.40";
                 selected_server = 4;
+            }
+
+            if(isMaintenance())
+            {
+                System.Windows.MessageBox.Show(
+                "AGMS" + selected_server + " is under maintenance. Contact the administrator for more information.",
+                "The Liu Lab :: Information",
+                (System.Windows.MessageBoxButton)MessageBoxButtons.OK,
+                        (System.Windows.MessageBoxImage)MessageBoxIcon.Warning);
+                return;
             }
 
             ButtonConnect.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate () { ButtonConnect.IsEnabled = false; }));

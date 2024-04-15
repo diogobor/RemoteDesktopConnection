@@ -29,6 +29,7 @@ namespace RemoteDesktopConnection.Control
         public static List<Model.Software> Software_agms2 = new();
         public static List<Model.Software> Software_agms3 = new();
         public static List<Model.Software> Software_agms4 = new();
+        public static List<Model.Server> Servers = new();
         public const int TIMEOUT_HOURS_USER_CONNECTION = 0;
         public const int INTERVAL_TIME_REFRESH_SECONDS = 100;
         public static DateTime last_refresh;
