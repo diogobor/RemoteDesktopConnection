@@ -53,10 +53,10 @@ namespace RemoteDesktopConnection.Control
 
         public static void SetDatabase()
         {
-            string googleClientID = "680087468736-skuel9mfejmals227c7kqrge7nm89qnf.apps.googleusercontent.com";
-            string googleClientSecret = "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";
+            string googleClientID = "945159632876-tnpf3i2ha0qettjaulv5ule9fjaf1ddd.apps.googleusercontent.com";
+            string googleClientSecret = "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";
             string spreadsheetId = "1ffT7OH5LbFQjaAkjx54CuzQfjIUX6j_rH0WUXzD9tKY";
-            //string spreadsheetId = "1nHIYaIvisFvulCKbjh7cYp5iX9a_v7IoKSsQvTsqtd4";
+
             Database = new Model.Database(googleClientID, googleClientSecret, spreadsheetId);
         }
 
