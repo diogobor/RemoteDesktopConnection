@@ -433,8 +433,8 @@ namespace RemoteDesktopConnection
                 //Update google sheets
                 Connection.UpdateSheet(selected_server, true, false);
 
-                string username = "sysfliu";
-                string password = "Agms2023!";
+                string username = "user_name";
+                string password = "password";
                 Management.ConnectAGMS(username, password, out error_taken_time_connected);
                 dispatcherTimer_checkProcessAlive.Start();
             }
@@ -476,17 +476,17 @@ namespace RemoteDesktopConnection
             selected_server = -1;
             if (AGMS_tab.SelectedIndex == 0)//AGMS2
             {
-                Management.IP_address = "10.10.65.31";
+                Management.IP_address = "x.x.x.x";
                 selected_server = 2;
             }
             else if (AGMS_tab.SelectedIndex == 1)//AGMS3
             {
-                Management.IP_address = "10.10.65.49";
+                Management.IP_address = "x.x.x.x";
                 selected_server = 3;
             }
             else if (AGMS_tab.SelectedIndex == 2)//AGMS4
             {
-                Management.IP_address = "10.10.65.40";
+                Management.IP_address = "x.x.x.x";
                 selected_server = 4;
             }
 
